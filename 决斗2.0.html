@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>决斗计算器</title>		
+	</head>
+	<body>
+		<h1>决斗计算器</h1>
+		<p>决斗机制：让两方决斗，直到有一方战力归零决斗结束，战力等于攻击力与血量。</p>
+		<div id="once">
+		<span>进攻方战力</span>
+		<input type="text" id="atk_pow" value="0" />
+        <span>进攻方护甲</span>
+		<input type="text" id="atk_arr" value="0" />
+		<br>
+		<span>防守方战力</span>
+		<input type="text" id="def_pow" value="0" />
+		<span>防守方护甲</span>
+		<input type="text" id="def_arr" value="0" />
+		<br>
+		--------------------------------------------------------------------
+	    <br>	    		
+		<span>进攻方战力剩余</span>
+		<input type="text" id="atk_res"  readonly />
+		<span>进攻方护甲剩余</span>
+		<input type="text" id="atk_res2"  readonly /><font id="atkword" color="red"></font>
+		<br>
+		<span>防守方战力剩余</span>
+		<input type="text" id="def_res"  readonly />
+		<span>防守方护甲剩余</span>
+		<input type="text" id="def_res2"  readonly /><font id="defword" color="red"></font>
+		<br>
+		<span>进攻方最终收益</span>
+		<input type="text" id="profit" readonly />
+		<button onclick="duel_opt()">计算</button>
+		</div>	
+		<fieldset>
+			<legend>决斗过程</legend>
+			<font style="font-size: 14px;color: red;">格式 : 战力+护甲</font>
+			<table border="1px">
+			<thead>
+			<tr>				
+				<th>进攻方</th>
+				<th>防守方</th>	
+			</tr> 	
+			</thead>
+            <tbody id="table"> </tbody>
+		</table>			
+		</fieldset>						
+		<script type="text/javascript">   			   
+		function duel_opt() {
+        var atkword = document.getElementById("atkword");
+		var defword = document.getElementById("defword");
+		var atk_pow = parseInt(document.getElementById('atk_pow').value);
+		var def_pow = parseInt(document.getElementById('def_pow').value);
+		var atk_arr = parseInt(document.getElementById('atk_arr').value);
+		var def_arr = parseInt(document.getElementById('def_arr').value);
+		var atk = atk_arr+atk_pow; 
+		var def = def_arr+def_pow;		
+            function report() {
+            	var g = document.getElementById("table").insertRow();
+            	var td1 = g.insertCell();
+            	var td2 = g.insertCell();
+            	td1.innerHTML = atk_pow+"+"+atk_arr;
+            	td2.innerHTML = def_pow+"+"+def_arr;
+            }           
+            document.getElementById("table").innerHTML="";
+            def_pow2 = parseInt(document.getElementById('def_pow').value);
+            report();
+			for(var i=0;i>=0;i++){
+				if (atk_pow<def) {
+					if(atk_pow>=def_arr){	
+						def_pow = def-atk_pow;
+						def_arr = 0;
+						atk=atk_arr+atk_pow;
+						def=def_pow;
+					}else{
+                        def_arr = def_arr-atk_pow;
+						atk=atk_arr+atk_pow;
+						def=def_arr+def_pow;
+					}
+					if(def_pow>=atk_arr){
+						atk_pow = atk-def_pow;
+						atk_arr = 0;
+						atk=atk_pow;
+						def=def_arr+def_pow;
+					}else{						
+						atk_arr = atk_arr-def_pow;
+						atk=atk_arr+atk_pow;
+						def=def_arr+def_pow;
+					}
+				} else {
+					def_pow = 0;
+					def_arr = 0;
+				}
+				if(def_pow<=0||atk_pow<=0){
+					if(atk_pow>def_pow){
+					atkword.innerText = "*进攻方存活！";
+					defword.innerText = "";
+					}else if(atk_pow==def_pow){
+					atkword.innerText = "";
+					defword.innerText = "";
+					}else{
+					atk_pow = 0;
+					atkword.innerText = "";
+					defword.innerText = "*防守方存活！";
+					}				
+					document.getElementById('atk_res').value = atk_pow;
+					document.getElementById('def_res').value = def_pow;
+					document.getElementById('atk_res2').value = atk_arr;
+					document.getElementById('def_res2').value = def_arr;
+					document.getElementById('profit').value = atk_pow+def_pow2-def_pow;
+					report();
+					break;
+				}
+                    report();
+			}
+		}
+		</script>
+	</body>
+</html>
